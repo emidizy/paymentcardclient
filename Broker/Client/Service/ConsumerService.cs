@@ -55,7 +55,7 @@ namespace Reciever.Broker.Client.Service
 
             //Bind queue to use defined exchange
             _channel.QueueBind(_brokerConfig.ClientQueue.QueueId, server.Exchange, _brokerConfig.ClientQueue.RoutingKey, null);
-            _channel.BasicQos(0, 10, false);
+            _channel.BasicQos(0, _brokerConfig.ClientQueue.MaxQueueCount, false);
 
             //Set Event to be triggered on connection shutdown
             _connection.ConnectionShutdown += RabbitMQ_ConnectionShutdown;
@@ -79,7 +79,7 @@ namespace Reciever.Broker.Client.Service
 
         private void OnConsumerRegistered(object sender, ConsumerEventArgs e)
         {
-            //_logger.LogInformation($"consumer registered {e.ConsumerTag}");
+            _logger.LogInformation($"consumer registered!");
         }
 
         private void OnConsumerShutdown(object sender, ShutdownEventArgs e)
@@ -114,7 +114,7 @@ namespace Reciever.Broker.Client.Service
             consumer.Unregistered += OnConsumerUnregistered;
             consumer.ConsumerCancelled += OnConsumerConsumerCancelled;
 
-            _channel.BasicConsume("ClientQueue", false, consumer);
+            _channel.BasicConsume(_brokerConfig.ClientQueue.QueueId, false, consumer);
             _logger.LogInformation("Actively listening for incoming payload");
 
             return Task.CompletedTask;

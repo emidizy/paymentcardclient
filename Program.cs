@@ -17,10 +17,11 @@ namespace Reciever
 {
     class Program
     {
-        
+        static IConfigurationRoot configuration;
+
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello, this is the Consumer application!");
+            Console.WriteLine("Hello, this is the PaymentCardExplorer's Consumer application!");
             var builder = new HostBuilder()
             .ConfigureAppConfiguration((hostingContext, config) =>
             {
@@ -31,12 +32,12 @@ namespace Reciever
                     config.AddCommandLine(args);
                 }
             })
-            .ConfigureServices((hostContext, services) =>
+            .ConfigureServices((hostingContext, services) =>
             {
                 services.AddOptions();
 
                 //Register appsetting bindings
-                var configuration = new ConfigurationBuilder()
+                configuration = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
                     .AddJsonFile("appsettings.json", false)
                     .Build();
@@ -48,7 +49,7 @@ namespace Reciever
                 services.AddSingleton<IHostedService, BrokerDaemon>();
             })
             .ConfigureLogging((hostingContext, logging) => {
-                logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                logging.AddConfiguration(configuration.GetSection("Logging"));
                 logging.AddConsole();
             });
 
