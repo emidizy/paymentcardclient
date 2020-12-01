@@ -1,4 +1,4 @@
-# paymentcardexplorer
+# Payment Card Client
 Client for consuming messages published by PaymentCardExplorer service.
 
 Requirements: 
